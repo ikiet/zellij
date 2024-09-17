@@ -83,7 +83,15 @@ impl ZellijPlugin for State {
                     self.move_selection_up();
                     should_render = true;
                 },
+                BareKey::Char('p') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
+                    self.move_selection_up();
+                    should_render = true;
+                },
                 BareKey::Down if key.has_no_modifiers() => {
+                    self.move_selection_down();
+                    should_render = true;
+                },
+                BareKey::Char('n') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
                     self.move_selection_down();
                     should_render = true;
                 },
