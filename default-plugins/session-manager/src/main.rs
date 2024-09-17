@@ -193,7 +193,15 @@ impl State {
                 self.new_session_info.handle_key(key);
                 should_render = true;
             },
+            BareKey::Char('n') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
+                self.new_session_info.handle_key(key);
+                should_render = true;
+            },
             BareKey::Up if key.has_no_modifiers() => {
+                self.new_session_info.handle_key(key);
+                should_render = true;
+            },
+            BareKey::Char('p') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
                 self.new_session_info.handle_key(key);
                 should_render = true;
             },
@@ -217,8 +225,12 @@ impl State {
                 self.active_screen = ActiveScreen::NewSession;
                 should_render = true;
             },
+            BareKey::Tab if key.has_modifiers(&[KeyModifier::Shift]) => {
+                self.toggle_active_screen_backward();
+                should_render = true;
+            },
             BareKey::Tab if key.has_no_modifiers() => {
-                self.toggle_active_screen();
+                self.toggle_active_screen_forward();
                 should_render = true;
             },
             BareKey::Char('f') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
@@ -289,11 +301,11 @@ impl State {
                     self.sessions.result_shrink();
                     should_render = true;
                 },
-                BareKey::Down if key.has_no_modifiers() => {
+                BareKey::Char('n') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
                     self.sessions.move_selection_down();
                     should_render = true;
                 },
-                BareKey::Up if key.has_no_modifiers() => {
+                BareKey::Char('p') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
                     self.sessions.move_selection_up();
                     should_render = true;
                 },
@@ -371,8 +383,12 @@ impl State {
                     }
                     should_render = true;
                 },
+                BareKey::Tab if key.has_modifiers(&[KeyModifier::Shift]) => {
+                    self.toggle_active_screen_backward();
+                    should_render = true;
+                },
                 BareKey::Tab if key.has_no_modifiers() => {
-                    self.toggle_active_screen();
+                    self.toggle_active_screen_forward();
                     should_render = true;
                 },
                 BareKey::Esc if key.has_no_modifiers() => {
@@ -395,7 +411,15 @@ impl State {
                 self.resurrectable_sessions.move_selection_down();
                 should_render = true;
             },
+            BareKey::Char('n') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
+                self.resurrectable_sessions.move_selection_down();
+                should_render = true;
+            },
             BareKey::Up if key.has_no_modifiers() => {
+                self.resurrectable_sessions.move_selection_up();
+                should_render = true;
+            },
+            BareKey::Char('p') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
                 self.resurrectable_sessions.move_selection_up();
                 should_render = true;
             },
@@ -419,8 +443,12 @@ impl State {
                 self.active_screen = ActiveScreen::NewSession;
                 should_render = true;
             },
+            BareKey::Tab if key.has_modifiers(&[KeyModifier::Shift]) => {
+                self.toggle_active_screen_backward();
+                should_render = true;
+            },
             BareKey::Tab if key.has_no_modifiers() => {
-                self.toggle_active_screen();
+                self.toggle_active_screen_forward();
                 should_render = true;
             },
             BareKey::Delete if key.has_no_modifiers() => {
@@ -514,11 +542,18 @@ impl State {
             },
         }
     }
-    fn toggle_active_screen(&mut self) {
+    fn toggle_active_screen_forward(&mut self) {
         self.active_screen = match self.active_screen {
             ActiveScreen::NewSession => ActiveScreen::AttachToSession,
             ActiveScreen::AttachToSession => ActiveScreen::ResurrectSession,
             ActiveScreen::ResurrectSession => ActiveScreen::NewSession,
+        };
+    }
+    fn toggle_active_screen_backward(&mut self) {
+        self.active_screen = match self.active_screen {
+            ActiveScreen::NewSession => ActiveScreen::ResurrectSession,
+            ActiveScreen::AttachToSession => ActiveScreen::NewSession,
+            ActiveScreen::ResurrectSession => ActiveScreen::AttachToSession,
         };
     }
     fn show_error(&mut self, error_text: &str) {
