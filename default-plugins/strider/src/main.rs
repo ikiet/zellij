@@ -95,6 +95,14 @@ impl ZellijPlugin for State {
                     self.move_selection_down();
                     should_render = true;
                 },
+                BareKey::Char('b') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
+                    self.descend_to_previous_path();
+                    should_render = true;
+                },
+                BareKey::Char('f') if key.has_modifiers(&[KeyModifier::Ctrl]) => {
+                    self.traverse_dir();
+                    should_render = true;
+                },
                 BareKey::Enter
                     if key.has_no_modifiers() && self.handling_filepick_request_from.is_some() =>
                 {
