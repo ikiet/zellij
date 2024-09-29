@@ -176,7 +176,7 @@ fn tab_line_prefix(
     palette: Palette,
     cols: usize,
 ) -> Vec<LinePart> {
-    let prefix_text = " Zellij ".to_string();
+    let prefix_text = "".to_string();
 
     let prefix_text_len = prefix_text.chars().count();
     let text_color = match palette.theme_hue {
@@ -199,13 +199,12 @@ fn tab_line_prefix(
         tab_index: None,
     }];
     if let Some(name) = session_name {
-        let name_part = format!("({})", name);
-        let name_part_len = name_part.width();
+        let name_part_len = name.width();
         let text_color = match palette.theme_hue {
             ThemeHue::Dark => palette.white,
             ThemeHue::Light => palette.black,
         };
-        let name_part_styled_text = style!(text_color, bg_color).bold().paint(name_part);
+        let name_part_styled_text = style!(text_color, bg_color).bold().paint(name);
         if cols.saturating_sub(prefix_text_len) >= name_part_len {
             parts.push(LinePart {
                 part: name_part_styled_text.to_string(),
